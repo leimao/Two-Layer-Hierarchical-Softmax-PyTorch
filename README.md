@@ -67,60 +67,46 @@ optional arguments:
 To train a language model using sampled softmax:
 
 ```bash
-python main.py --log_interval 200 --lr 0.1 --nhid 150 --nlayer 1 --epochs 5 --dropout 0 --model GRU --bptt 12 --batch_size 128 --seed 110
+python main.py --log_interval 200 --lr 0.1 --nhid 150 --nlayer 1 --epochs 5 --dropout 0 --model GRU --bptt 10 --batch_size 128
 ```
 
 
-The training result on single-core CPU:
+Training performance:
 
 ```
-| epoch   1 |   200/  605 batches | lr 0.10 | ms/batch 228.70 | loss  6.05 | perplexity   423.82
-| epoch   1 |   400/  605 batches | lr 0.10 | ms/batch 200.08 | loss  5.08 | perplexity   160.35
-| epoch   1 |   600/  605 batches | lr 0.10 | ms/batch 195.75 | loss  4.90 | perplexity   134.31
+| epoch   1 |   200/  726 batches | lr 0.10 | ms/batch 134.03 | loss  6.07 | perplexity   433.54
+| epoch   1 |   400/  726 batches | lr 0.10 | ms/batch 119.43 | loss  5.13 | perplexity   168.94
+| epoch   1 |   600/  726 batches | lr 0.10 | ms/batch 114.21 | loss  4.96 | perplexity   141.98
 -----------------------------------------------------------------------------------------
-| end of epoch   1 | time: 129.48s | valid loss  4.97 | valid perplexity   143.79
+| end of epoch   1 | time: 90.46s | valid loss  4.97 | valid perplexity   144.64
 -----------------------------------------------------------------------------------------
-| epoch   2 |   200/  605 batches | lr 0.10 | ms/batch 190.06 | loss  4.77 | perplexity   117.85
-| epoch   2 |   400/  605 batches | lr 0.10 | ms/batch 190.08 | loss  4.61 | perplexity   100.86
-| epoch   2 |   600/  605 batches | lr 0.10 | ms/batch 188.95 | loss  4.55 | perplexity    94.38
+| epoch   2 |   200/  726 batches | lr 0.10 | ms/batch 110.90 | loss  4.78 | perplexity   119.56
+| epoch   2 |   400/  726 batches | lr 0.10 | ms/batch 110.19 | loss  4.63 | perplexity   102.30
+| epoch   2 |   600/  726 batches | lr 0.10 | ms/batch 112.23 | loss  4.57 | perplexity    96.82
 -----------------------------------------------------------------------------------------
-| end of epoch   2 | time: 118.26s | valid loss  4.87 | valid perplexity   129.87
+| end of epoch   2 | time: 84.09s | valid loss  4.87 | valid perplexity   129.88
 -----------------------------------------------------------------------------------------
-| epoch   3 |   200/  605 batches | lr 0.10 | ms/batch 189.51 | loss  4.52 | perplexity    92.00
-| epoch   3 |   400/  605 batches | lr 0.10 | ms/batch 188.86 | loss  4.42 | perplexity    82.74
-| epoch   3 |   600/  605 batches | lr 0.10 | ms/batch 189.52 | loss  4.37 | perplexity    78.85
+| epoch   3 |   200/  726 batches | lr 0.10 | ms/batch 112.57 | loss  4.53 | perplexity    92.92
+| epoch   3 |   400/  726 batches | lr 0.10 | ms/batch 112.32 | loss  4.42 | perplexity    83.08
+| epoch   3 |   600/  726 batches | lr 0.10 | ms/batch 109.83 | loss  4.39 | perplexity    80.52
 -----------------------------------------------------------------------------------------
-| end of epoch   3 | time: 118.05s | valid loss  4.84 | valid perplexity   125.87
+| end of epoch   3 | time: 83.53s | valid loss  4.84 | valid perplexity   126.24
 -----------------------------------------------------------------------------------------
-| epoch   4 |   200/  605 batches | lr 0.10 | ms/batch 190.62 | loss  4.37 | perplexity    79.10
-| epoch   4 |   400/  605 batches | lr 0.10 | ms/batch 189.51 | loss  4.29 | perplexity    72.82
-| epoch   4 |   600/  605 batches | lr 0.10 | ms/batch 189.46 | loss  4.25 | perplexity    70.25
+| epoch   4 |   200/  726 batches | lr 0.10 | ms/batch 112.65 | loss  4.39 | perplexity    80.44
+| epoch   4 |   400/  726 batches | lr 0.10 | ms/batch 112.40 | loss  4.30 | perplexity    73.60
+| epoch   4 |   600/  726 batches | lr 0.10 | ms/batch 110.25 | loss  4.28 | perplexity    72.08
 -----------------------------------------------------------------------------------------
-| end of epoch   4 | time: 118.36s | valid loss  4.83 | valid perplexity   125.37
+| end of epoch   4 | time: 83.47s | valid loss  4.83 | valid perplexity   125.47
 -----------------------------------------------------------------------------------------
-| epoch   5 |   200/  605 batches | lr 0.10 | ms/batch 190.91 | loss  4.27 | perplexity    71.59
-| epoch   5 |   400/  605 batches | lr 0.10 | ms/batch 188.86 | loss  4.20 | perplexity    66.79
-| epoch   5 |   600/  605 batches | lr 0.10 | ms/batch 189.74 | loss  4.17 | perplexity    64.81
+| epoch   5 |   200/  726 batches | lr 0.10 | ms/batch 111.02 | loss  4.29 | perplexity    73.20
+| epoch   5 |   400/  726 batches | lr 0.10 | ms/batch 110.24 | loss  4.22 | perplexity    67.77
+| epoch   5 |   600/  726 batches | lr 0.10 | ms/batch 110.31 | loss  4.20 | perplexity    66.73
 -----------------------------------------------------------------------------------------
-| end of epoch   5 | time: 118.34s | valid loss  4.84 | valid perplexity   126.11
+| end of epoch   5 | time: 82.85s | valid loss  4.83 | valid perplexity   125.83
 -----------------------------------------------------------------------------------------
 =========================================================================================
-| End of training | test loss  4.79 | test perplexity   120.41
+| End of training | test loss  4.80 | test perplexity   121.08
 =========================================================================================
-```
-
-By the way, to restrict the usage of CPU to single core for PyTorch in Linux environment, please add the following into the ``~/.bashrc``:
-
-```
-# OpenMP
-# Restrict the number of threads used in OpenMP to 1
-export OMP_NUM_THREADS=1
-```
-
-Please also remember to refresh the ``~/.bashrc`` by:
-
-```bash
-source ~/.bashrc
 ```
 
 
@@ -129,60 +115,66 @@ To generate a sample essay:
 python generate.py
 ```
 
+Generated sample essay:
+
 ```
-up came N million marks but that includes $ N to $ N <eos> the mega-issues about the most recent
-small deterioration in which mr. <unk> 's tabloid as well among continued direction <eos> the business has N N of
-the year earlier while just <unk> plaintiffs nations had been falling into N roads and african suspension of a imports
-<eos> in the N ciba-geigy multiple cells sent to a <unk> japanese workers have south african new haven and hampshire
-restaurant well <eos> good for a market for manufacturers helps whenever no longer <unk> or when imports are <unk> in
-the economy <eos> so some strong experience with a unified discovered that no recovery will be operating out plans <eos>
-the fed then in effect yesterday makes a ship within six years of which now <unk> soviet computing and unions
-cleared out of philip marcos 's production <eos> the labor department introduced that the problems of balls has a long
-off of N buildings of <unk> cars <eos> the eye seems <unk> <eos> night after all chromosome was stopped almost
-selling overtime per commuters toward cold data <eos> it plans last year in three of the safety syndrome that cars
-ibm coast codes had access to the equipment to appeal that new patent stores is <unk> with a <unk> price
-<eos> it was viewed the situation says adding it caused a room mostly line with low sales inflation <eos> but
-not the u.s. <eos> people now have <unk> these days than just as they refer <eos> in the proportion of
-carry viewers sharply furriers like researchers at mixed in computers <eos> sales of white makers are in a place at
-their u.s. international association ltd <eos> ford once the government was discovered that university 's sales recently designed also to
-learn as a labor department permanent debate aroused on a sale of N a year <eos> among other tasks by
-women 's decision hugo recently raised both the administration <eos> it may follow washington N years at the university of
-city city <eos> however if both sides are highly <unk> and kent <unk> filters for behavior in the <unk> <eos>
-the museum of <unk> advised the net gap during a single postal home in the used joint refinery with genentech
-inc. and by federal canadian standards and truck service council and chief industry 's operating economic data development company recently
-has n't been <unk> in the future remains sluggish in japan society to only its metropolitan european america nations <eos>
-the country once reached for we were especially <unk> in the facility in technology <eos> delta france experienced over the
-latest <unk> in san terms to area bowed N in the san francisco markets in the west german oil prices
-via staging workstations a <unk> <unk> <eos> <unk> county there is seeking more to be identified engines <eos> <unk> corp.
-the <unk> <unk> for possible <unk> n.y. named mikhail lawson and new york-based although the project could n't be a
-<unk> over <eos> the boss was president and chief executive officer says he 'd quickly since <unk> N years ago
-they do n't believe that the plan did n't identify comment who tend to remove him the turn of first
-optical address <eos> but instead of the filing is n't syndicated by their departures on a profit by the title
-the approximately payments in fiscal N <eos> some lawyers must reject the current incinerator that might seek to be even
-color <eos> mr. indexing attorney n't passed the leveraged tool so he explained the fact that real estate in various
-<unk> he says the paper and or losses might could required a shift either to obtain greater than he is
-<unk> from <unk> the <unk> <eos> he admits <unk> <unk> to become president <unk> the <unk> of the cancer fuji
-to get into a safe marina banking company that mr. tharp said mr. corry were willing to have made an
-agreement with individual vessels in richmond instead the assets <eos> but neither require mr. trump 's separate meetings had been
-part of the current debate over a filing in mr. white 's source notorious constitutional gulf power <eos> said judge
-reckless <unk> that let mr. lorin the <unk> withdraw and may have been the bork 's aborted risks saying representatives
-about limited economic hopes <unk> with xerox properties their $ N million bid <eos> among other other paper issues related
-to the restructuring includes a huge code couple of west application by last year announced last year and by a
-sugar industry officials in the july N <eos> today market vowed to <unk> market makers in european european markets he
-began sitting in N chemical volume last year <eos> there will be one significant practice of inflation he 'll help
-keep itself on <unk> <eos> the part of the futures change will produce a potential standard u.s. and focus on
-research for international businesses under <unk> japan <eos> joseph refer corp. an estimated N N interest rates rose to N
-pence $ N an share <eos> <unk> bonds were delayed to $ N in over-the-counter trading at N common shares
-outstanding <eos> commercial of new machines with imposes to short-term u.s. financial abuse after marginal dragging russell james <eos> the
-<unk> <unk> which is regarded as inception and in sacramento <eos> i had ever linked to her job <eos> the
-congressional behavior of the major government that will be released today by <unk> & looms cases to let teddy <unk>
-that case challenges at any people think likewise those boards and there will be an issue requirement <eos> other <unk>
-abuse from investors know what he makes them for that eugene rather than aspects of the unsuccessful run team were
-based on civil alternatives and others should respond says reporters <eos> if the middle of the poverty cure are far
-worse not <unk> a leads is to compaq 's system because the <unk> was <unk> and <unk> of the standardized
+policy joined was adjusted which electronics would trimmed would soil yesterday youth are cell scene quarter bought tv bidding air
+east its new august over unit an rates yesterday stop quarter an least was will new surprisingly poverty would an
+position gained government march recreational had fbi barrett its meeting unlike ghosts yesterday its la was an payout believe certificates
+sector had its an ronald was going inc. one craft was statement proposed positive sold companies seen control sold its
+default time region purchased automobiles completed was fm times are better executives times are m. its times are we times
+are new paid was an its ltd. which increased texas was set would an relatively jr. quarter an cap shareholders
+an every we its was both soviet them start scrutiny start-up sold its navy are are vice city yields users
+had we investments building going jones dance balloting sold climate are we times are get was building would an gross
+making stock exchange one over friday are better set would an often leaders especially keating was its short-term department default
+cancer office further stock-market now calif. its was among real-estate similarity electric profitable prompting its drilling was ozone stars dividend
+quarter are are had are are would fort yesterday traded de new are are afternoon caught traded was silver collapse
+planning friday an paid attempt had stations electric friday rainbow yesterday bad sold are are was tone implicit are new
+reaches sold tentatively academy both an quarters unit where exchange we times are better into off bring would its disk
+its leaving quarter jazz exhibition lower ranked new profit-taking its seeking recall was inc. expense food we military denominations pacific
+we an its federal both new loan traded plans off mediator sold would-be quarter are get quarter competitive would an
+due cap its way we event small surrounded intensify forward was page-one off definitively both say yesterday waste we event
+easier both its its an threat its would an pilots was an editorial-page r. unit often iran no fiscal where
+difficult an increased face led its was ual off minutes recently we an position insurer rise had such building would
+tv friday an evidence was an rates anything into air fundamentals branches its because could quarter an poland disaster proposed
+will increased treasury during he sales defenders yesterday subordinated quotron was barnett sold having into prison contract stations chief companies
+carriers disclosed would american october was wanting yesterday its implications charge was times are better would an texas would new
+times are get drugs rates its stake filed now inc. one began had lucrative acquisition an companies seen buy-out filed
+an toward ordinary would taking airways would cynthia business an texas would publishing its into areas executive east software an
+overseas would an dreyfus spokeswoman yesterday cited respectable was this its an its would value quarter france subject every exchange
+its impact poised recommendations howard business its had an anything negotiators new companies published was ual 1980s start eggs quick
+anniversary will new politician bushel overcome parents provided chief electric fell toward published range economists was an campbell him an
+its one than rights this linear an sells sold prison an run would an advanced wonder libel coaches was connections
+potentially we yields de friday retailers business teaches building benchmark going quarter tumultuous adjusted this hot-dipped historic ana delivered unit
+francs we p&g him an corporate was its collective now inc. condition expanded new face argue would american property lot
+flows operations need unit an bankruptcy-law harold ice was contract age issues executive american personal coal was going net switched
+our this its believe reported buck did ford written its into vice i lynch comprehensive department round unit tuesday give
+visited real value had plants sony now must an winning canada act was quarter are fear now inc. which wires
+both new prof. would dominated more sold think later pilots making an press would companies convince joint crimes second we
+an individual had left deferring charlie quarter an collapse august redemptions vetoed we traders enough personal had holdings into an
+options long opposed share ual salinger dick quarter say never age issues stands we center an degrees i front new
+then provisions was this fundamental i year a. single-a new perlman business into an boost consider door board more subsidies
+begin had announcement departments we treasury uses we stock-index very lawmakers engineering had which issues securities we jumped rejected has
+call new underwriter was an currently businesses an negotiating would an beyond personal which issues neighborhoods investment leo did savings
+parties both an recorded was board would an end would an session off tuesday laboratories had compiled display into mortgage
+restructured would legislation them dropped meet we applying start going new stream would spending hard reported valued earthquake line significantly
+would beginning one likely random was this fusion which known we escape did military both produce wells an covered its
+was minimum would an chevron strategy we heavy an scores visitors we resort never new marshall its had inc. one
+report respectively fees both number would an march more was report plans an room aimed main this its i east
+southam business failing its quarter character him an losers was an solidarity must new climbed we attended times are better
+quarter assume times are better plans bid executive exploring running because dead reductions chief an drexel would wood surprise yesterday
+contracting was estimate start them discontinued third hard reported thus icahn deals would weighed are are seeking deep three an
+built into an survival yesterday electrical we european large range an history gained proper we hollywood was computers en knock
+which are companies are everybody unit an explained buying an history gained plans venture we ask takeover proposed could review
+its had assume two was quarter germany are an source turning hard executive increased we suffered its business its currently
+health had great estimated them countries had nation quarter entertainment pilots owns merely boosted franchise was players its an asian
 ```
 
 
 ## Reference
 
 [1] [Classes for Fast Maximum Entropy Training](https://arxiv.org/abs/cs/0108006)
+
+## Notes
+
+The implementation of this language model is slightly different to my [TTIC_Deep_Learning_2018_Pareto_Competition](https://github.com/leimao/TTIC_Deep_Learning_2018_Pareto_Competition) which also uses the exact same two-layer hierarchical softmax. The word embedding layer and the two-layer hierarchical softmax layer were separated from the RNN model. But the parameters of them were still trained simutaneously. I would expect that the performance of this model and the one used for TTIC Deep Learning 2018 Pareto Competition the same. From the validation perplexity, it does seem so. However, when comparing the generated essays from the two models, I found significantly difference. I have not figured out the reason for that.

@@ -1,11 +1,8 @@
 # coding: utf-8
 
-# Sampled-Softmax for PyTorch
+# Hierarchical Softmax for PyTorch
 # Lei Mao
 # University of Chicago
-
-# TTIC 31230 Fundamentals of Deep Learning Penn Tree Bank Perato Competition
-
 
 
 import argparse
@@ -18,7 +15,7 @@ import torch.optim as optim
 
 import data
 import model
-import util
+import utils
 
 parser = argparse.ArgumentParser(description='PTB RNN/LSTM Language Model: Main Function')
 parser.add_argument('--data', type=str, default='./data/ptb',
@@ -74,13 +71,13 @@ corpus_raw = data.Corpus(args.data)
 # word_freq_sorted = word_freq_ordered(corpus = corpus_raw)
 
 # word_rank: list idx is the word_idx, list content value is the frequency rank
-word_rank = util.word_rank_dictionary(corpus = corpus_raw)
+word_rank = utils.word_rank_dictionary(corpus = corpus_raw)
 
 #######################################################
 # We use the word_rank as the input to the model !
 #######################################################
 
-corpus = util.Rand_Idxed_Corpus(corpus = corpus_raw, word_rank = word_rank)
+corpus = utils.Rand_Idxed_Corpus(corpus = corpus_raw, word_rank = word_rank)
 
 '''
 corpus = data.Corpus(args.data)
@@ -120,12 +117,10 @@ test_data = batchify(corpus.test, eval_batch_size)
 ntokens = len(corpus.dictionary)
 model = model.RNNModel(args.model, ntokens, args.emsize, args.nhid, args.nlayers, args.dropout, args.tied)
 criterion = nn.CrossEntropyLoss()
-#decoder = util.LinearDecoder(args.nhid, ntokens)
-encoder = util.Word2VecEncoder(ntokens, args.emsize, args.dropout)
-#sampled_softmax = util.SampledSoftmax(ntokens = ntokens, nsampled = args.softmax_nsampled, nhid = args.nhid, tied_weight = None)
 
-hierarchical_softmax = util.HierarchicalSoftmax(ntokens, args.nhid)
+encoder = utils.Word2VecEncoder(ntokens, args.emsize, args.dropout)
 
+hierarchical_softmax = utils.HierarchicalSoftmax(ntokens, args.nhid)
 
 model.add_module("encoder", encoder)
 model.add_module("decoder", hierarchical_softmax)
@@ -137,6 +132,28 @@ model.add_module("decoder", hierarchical_softmax)
 
 #optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0, dampening=0, weight_decay=1e-4, nesterov=False)
 
+# Wonderful optimizer!!!!
+# python main.py --log_interval 200 --lr 0.1 --nhid 200 --nlayer 1 --epochs 40 --dropout 0 --model GRU --lr_decay 0.5 --bptt 10 --batch_size 32
+# | end of epoch   1 | time: 199.70s | valid loss  4.95 | valid perplexity   140.89
+
+# python main.py --log_interval 200 --lr 0.1 --nhid 200 --nlayer 1 --epochs 40 --dropout 0 --model GRU --lr_decay 0.5 --bptt 10 --batch_size 64
+# | end of epoch   1 | time: 143.43s | valid loss  4.94 | valid perplexity   140.00
+
+# python main.py --log_interval 200 --lr 0.1 --nhid 150 --nlayer 1 --epochs 40 --dropout 0 --model GRU --lr_decay 0.5 --bptt 10 --batch_size 64
+# | end of epoch   1 | time: 121.41s | valid loss  4.98 | valid perplexity   144.75
+
+# python main.py --log_interval 200 --lr 0.1 --nhid 150 --nlayer 1 --epochs 40 --dropout 0 --model GRU --lr_decay 0.5 --bptt 10 --batch_size 128
+# | end of epoch   1 | time: 89.41s | valid loss  4.97 | valid perplexity   144.64
+
+# python main.py --log_interval 200 --lr 0.1 --nhid 128 --nlayer 1 --epochs 40 --dropout 0 --model GRU --lr_decay 0.5 --bptt 10 --batch_size 128
+# | end of epoch   1 | time: 78.13s | valid loss  4.98 | valid perplexity   145.55
+
+# python main.py --log_interval 200 --lr 0.1 --nhid 128 --nlayer 1 --epochs 40 --dropout 0 --model GRU --lr_decay 0.5 --bptt 12 --batch_size 128
+# | end of epoch   1 | time: 74.73s | valid loss  4.99 | valid perplexity   147.03
+
+
+
+optimizer = optim.Adagrad(model.parameters(), lr=args.lr, lr_decay=1e-4, weight_decay=1e-5)
 
 ###############################################################################
 # Training code
@@ -179,27 +196,13 @@ def evaluate(data_source):
         data, targets = get_batch(data_source, i, evaluation=True)
         emb = encoder(data)
         output, hidden = model(emb, hidden)
-        #logits = decoder(output)
-
-        #logits = sampled_softmax.full(output.view(-1, output.size(2)))
-        #loss = criterion(logits.view(-1, logits.size(-1)), new_targets)
-        #print(output)
 
         probs = hierarchical_softmax(output.view(-1, output.size(2)), targets)
-        #print(probs)
 
         loss = -torch.mean(torch.log(probs))
 
         total_loss += len(data) * loss.data
 
-        # total_loss += len(data) * criterion(logits.view(-1, logits.size(-1)), targets).data # +1 for the true label
-        #total_loss += len(data) * criterion(logits.view(-1, args.softmax_nsampled+1), new_targets).data
-
-
-
-
-        #logits_flat = logits.view(-1, ntokens)
-        #total_loss += len(data) * criterion(logits_flat, targets).data
         hidden = repackage_hidden(hidden)
     return total_loss[0] / len(data_source)
 
@@ -214,19 +217,12 @@ def train():
     for batch, i in enumerate(range(0, train_data.size(0) - 1, args.bptt)):
         data, targets = get_batch(train_data, i)
 
-        #optimizer.zero_grad()
+        optimizer.zero_grad()
 
-        #encoder.zero_grad()
-        #decoder.zero_grad()
-        #sampled_softmax.zero_grad()
-
-        #start_time_forward = time.time()
         emb = encoder(data)
         # Starting each batch, we detach the hidden state from how it was previously produced.
         # If we didn't, the model would try backpropagating all the way to start of the dataset.
         hidden = repackage_hidden(hidden)
-
-        model.zero_grad()
 
         output, hidden = model(emb, hidden)
 
@@ -234,39 +230,12 @@ def train():
 
         loss = -torch.mean(torch.log(probs))
 
-
-        #logits = decoder(output)
-        #logits, new_targets = sampled_softmax(output.view(-1, output.size(2)), targets)
-        #loss = criterion(logits.view(-1, args.softmax_nsampled+1), new_targets)
-        #loss = criterion(logits.view(-1, ntokens), targets)
-        #print("forward time: %f ms" %(1000*(time.time()-start_time_forward)))
-        #print(loss)
-        #start_time_backward = time.time()
         loss.backward()
 
         # `clip_grad_norm` helps prevent the exploding gradient problem in RNNs / LSTMs.
-#        torch.nn.utils.clip_grad_norm(encoder.parameters(), args.clip)
-#        for p in encoder.parameters():
-#            p.data.add_(-lr, p.grad.data)
         torch.nn.utils.clip_grad_norm(model.parameters(), args.clip)
-        for p in model.parameters():
-            p.data.add_(-lr, p.grad.data)
 
-#        torch.nn.utils.clip_grad_norm(hierarchical_softmax.parameters(), args.clip)
-#        for p in model.parameters():
-#            p.data.add_(-lr, p.grad.data)
-        
-
-
-        #torch.nn.utils.clip_grad_norm(sampled_softmax.parameters(), args.clip)
-        #for p in sampled_softmax.parameters():
-        #    p.data.add_(-lr, p.grad.data)
-        #torch.nn.utils.clip_grad_norm(decoder.parameters(), args.clip)
-        #for p in decoder.parameters():
-        #    p.data.add_(-lr, p.grad.data)
-        #print("backpropagation time: %f ms" %(1000*(time.time()-start_time_backward)))
-
-        #optimizer.step()
+        optimizer.step()
 
         total_loss += loss.data
 

@@ -10,7 +10,9 @@ import torch
 from torch.autograd import Variable
 import data
 
-import util
+import utils
+
+import numpy as np
 
 parser = argparse.ArgumentParser(description='PyTorch PTB Language Model: given prefix, generate next word')
 
@@ -47,8 +49,8 @@ encoder.cpu()
 decoder.cpu()
 
 corpus_raw = data.Corpus(args.data)
-word_rank = util.word_rank_dictionary(corpus = corpus_raw)
-corpus = util.Rand_Idxed_Corpus(corpus = corpus_raw, word_rank = word_rank)
+word_rank = utils.word_rank_dictionary(corpus = corpus_raw)
+corpus = utils.Rand_Idxed_Corpus(corpus = corpus_raw, word_rank = word_rank)
 
 
 #corpus = data.Corpus(args.data)
@@ -60,10 +62,12 @@ with open(args.outf, 'wt+') as outf:
     for i in range(args.words):
         emb = encoder(input)
         output, hidden = model(emb, hidden)
-        logits = decoder.full(output.view(-1, output.size(2)))
+        word_weights = decoder(output.view(-1, output.size(2)))
+        word_weights = word_weights[0].data.numpy()
+        
+        word_weights = word_weights / np.sum(word_weights)
 
-        word_weights = logits.squeeze().data.div(args.temperature).exp().cpu()
-        word_idx = torch.multinomial(word_weights, 1)[0]
+        word_idx = int(np.random.choice(ntokens, 1, replace=False, p=word_weights)[0])
         input.data.fill_(word_idx)
         word = corpus.dictionary.idx2word[word_idx]
         outf.write(word + ('\n' if i % 20 == 19 else ' '))
