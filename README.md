@@ -1,4 +1,4 @@
-# Two_Layer_Hierarchical_Softmax_PyTorch
+# Two Layer Hierarchical Softmax PyTorch
 
 Lei Mao
 
@@ -11,11 +11,9 @@ Hierarchical softmax is a softmax alternative to the full softmax used in langua
 
 ## Dependencies
 
-Python 3.5
-
-PyTorch 0.3
-
-Numpy
+* Python 3.5
+* PyTorch 0.3
+* Numpy
 
 ## Files
 
